@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/main_head_search">
+
+        <!--<include android:id="@+id/toolbar_main"-->
+            <!--layout="@layout/toolbar"/>-->
+
+        <include android:id="@+id/search_main"
+            layout="@layout/search_layout"/>
+
+</LinearLayout>

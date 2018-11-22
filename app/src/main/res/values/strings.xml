@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Memorandum</string>
+    <string name="main_title">备忘录</string>
+    <string name="tixing">提醒</string>
+    <string name="shoucang">收藏</string>
+    <string name="daiban">待办</string>
+    <string name="biaoqain">标签</string>
+    <string name="addNewMemorandum_toolbar">编辑备忘录</string>
+    <string name="paizhao">拍照</string>
+    <string name="no_memorandum">没有备忘录</string>
+</resources>
