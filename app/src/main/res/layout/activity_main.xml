@@ -63,9 +63,6 @@
                         android:src="@mipmap/undo"
                         android:visibility="gone"/>
                 </RelativeLayout>
-
-
-
             </android.support.design.widget.AppBarLayout>
 
             <android.support.v7.widget.RecyclerView

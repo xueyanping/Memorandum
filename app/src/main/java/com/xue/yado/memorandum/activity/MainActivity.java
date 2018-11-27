@@ -75,7 +75,7 @@ public class MainActivity extends BaseActivity implements MemorandumDataChangedL
 
     GridRecyclerAdapter adapter;
 
-  //  private List<Memoire> searchResuleList = new ArrayList<>();
+
     String toolbar_title;
 
 
@@ -94,6 +94,12 @@ public class MainActivity extends BaseActivity implements MemorandumDataChangedL
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+       // showFloatActionButton();
 
     }
 
@@ -158,9 +164,9 @@ public class MainActivity extends BaseActivity implements MemorandumDataChangedL
             @Override
             public void itemClick(int position) {
                 if(search_text.getText().toString().equals("")){
-                    startAction(MainActivity.this,AddMemorandumActivity.class,position,true);
+                    startAction(MainActivity.this,DetailMemorandumActivity.class,position,true);
                 }else{
-                    startAction(MainActivity.this,AddMemorandumActivity.class,position,true);
+                    startAction(MainActivity.this,DetailMemorandumActivity.class,position,true);
 
                 }
 
@@ -190,21 +196,29 @@ public class MainActivity extends BaseActivity implements MemorandumDataChangedL
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-                if(charSequence.toString().length()>0){
+                String content = charSequence.toString();
+                if(content.length()>0){
                     undo.setVisibility(View.VISIBLE);
                 }else{
                     undo.setVisibility(View.GONE);
                 }
+                //若输入的内容为格空则不执行搜索
+                if(content.startsWith(" ")){
+                        return;
+                }
 
-                if(searchData(charSequence.toString())!=null){
+                if(searchData(content) != null){
                     AppCache.getSearchList().clear();
-                    AppCache.getSearchList().addAll(searchData(charSequence.toString()));
+                    AppCache.getSearchList().addAll(searchData(content));
                     adapter.setData(AppCache.getSearchList());
                     adapter.notifyDataSetChanged();
                 }else{
                     adapter.setData(AppCache.getMemireList());
                     adapter.notifyDataSetChanged();
+                }
+
+                if(search_text.equals("")){
+                    adapter.setData(AppCache.getMemireList());
                 }
 
 
@@ -216,8 +230,6 @@ public class MainActivity extends BaseActivity implements MemorandumDataChangedL
             }
         });
     }
-
-
 
     public List<Memoire> searchData(String string) {
         int i = 0;
@@ -238,7 +250,6 @@ public class MainActivity extends BaseActivity implements MemorandumDataChangedL
 
     @Override
     public void setData() {
-        //  super.setData();
         Memoire memoire = new Memoire("标题","内容",new Date(),new Date(),"类型0");
         Memoire memoire2 = new Memoire("标题2","内容2",new Date(),new Date(),"类型2");
         AppCache.getMemireList().add(memoire);
@@ -251,26 +262,7 @@ public class MainActivity extends BaseActivity implements MemorandumDataChangedL
         AppCache.getMemireList().add(memoire5);
         Memoire memoire6 = new Memoire("标题3","内容2",new Date(),new Date(),"类型3");
         AppCache.getMemireList().add(memoire6);
-//        Memoire memoire7 = new Memoire("标题3","内容2",new Date(),new Date(),"类型3");
-//        AppCache.getMemireList().add(memoire7);
-//        Memoire memoire8 = new Memoire("标题3","内容2",new Date(),new Date(),"类型3");
-//        AppCache.getMemireList().add(memoire8);
-//        Memoire memoire9 = new Memoire("标题3","内容2",new Date(),new Date(),"类型3");
-//        AppCache.getMemireList().add(memoire9);
-//        Memoire memoire13 = new Memoire("标题3","内容2",new Date(),new Date(),"类型3");
-//        AppCache.getMemireList().add(memoire13);
-//        Memoire memoire14 = new Memoire("标题3","内容2",new Date(),new Date(),"类型3");
-//        AppCache.getMemireList().add(memoire14);
-//        Memoire memoire15 = new Memoire("标题3","内容2",new Date(),new Date(),"类型3");
-//        AppCache.getMemireList().add(memoire15);
-//        Memoire memoire16 = new Memoire("标题3","内容2",new Date(),new Date(),"类型3");
-//        AppCache.getMemireList().add(memoire16);
-//        Memoire memoire17 = new Memoire("标题3","内容2",new Date(),new Date(),"类型3");
-//        AppCache.getMemireList().add(memoire17);
-//        Memoire memoire18 = new Memoire("标题3","内容2",new Date(),new Date(),"类型3");
-//        AppCache.getMemireList().add(memoire18);
-//        Memoire memoire19 = new Memoire("标题3","内容2",new Date(),new Date(),"类型3");
-//        AppCache.getMemireList().add(memoire19);
+
     }
 
     @Override

@@ -33,13 +33,13 @@ public class GridRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private MemorandumDataChangedListener memorandumDataChangedListener;
     public static final int NO_DATA = 0x1001;
     public static final int HAS_DATA = 0x1002;
-
     RecyclerView recyclerView;
+    RecyclerView.LayoutManager layoutManager;
 
     private List<Memoire> dataList = new ArrayList<>();
     public GridRecyclerAdapter(RecyclerView recyclerView) {
         this.recyclerView = recyclerView;
-
+        layoutManager = recyclerView.getLayoutManager();
     }
 
     @Override
@@ -68,23 +68,24 @@ public class GridRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view;
-        if(viewType == NO_DATA){
-            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.no_memorandum_layout,parent,false);
-            RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
-            if(layoutManager instanceof GridLayoutManager){
+        if(layoutManager instanceof GridLayoutManager){
                 ((GridLayoutManager)layoutManager).setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
                     @Override
                     public int getSpanSize(int position) {
-                        return 2;
+                        return setSpanSize();
                     }
                 });
             }
+        if(viewType == NO_DATA){
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.no_memorandum_layout,parent,false);
+            //隐藏MainActivity中的FloatActionButton
             memorandumDataChangedListener.hideFloatActionButton();
-            memorandumDataChangedListener.hideSearchView();
             return new NoDataViewHolder(view);
             }else{
                  view = LayoutInflater.from(parent.getContext()).inflate(R.layout.main_recycler_item_layout,parent,false);
-                return new ContentViewHolder(view);
+                //显示MainActivity中的FloatActionButton
+             memorandumDataChangedListener.showFloatActionButton();
+                 return new ContentViewHolder(view);
         }
     }
 
@@ -146,9 +147,18 @@ public class GridRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         public NoDataViewHolder(View itemView) {
             super(itemView);
+
         }
     }
 
+
+    public int setSpanSize(){
+        if(dataList.size()<=0){
+            return 2;
+        }else{
+            return 1;
+        }
+    }
 
     public void setRecyclerItemClickListener(MainRecyclerItemClickListener listener){
         this.listener = listener;

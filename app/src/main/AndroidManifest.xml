@@ -13,8 +13,18 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:windowSoftInputMode="adjustResize">
-        <activity android:name=".activity.MainActivity"
-           >
+        <provider
+            android:authorities="com.xue.yado.memorandum.provider"
+            android:name="android.support.v4.content.FileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/filepath"
+                >
+            </meta-data>
+        </provider>
+        <activity android:name=".activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -22,9 +32,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".activity.AddMemorandumActivity" />
-        <activity android:name=".activity.Main2Activity">
-
-        </activity>
+        <activity android:name=".activity.Main2Activity"></activity>
+        <activity android:name=".activity.DetailMemorandumActivity"></activity>
     </application>
 
 </manifest>
