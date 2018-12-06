@@ -17,9 +17,9 @@ public class AppCache {
     private  Context mContext;
     private List<Memoire> memireList = new ArrayList();
     private List<Memoire> searchList = new ArrayList();
+    private List<String> typeList = new ArrayList();
 
-    public AppCache() {
-    }
+    public AppCache() {}
 
     private static class SingleTon{
         private static AppCache appCache = new AppCache();
@@ -32,6 +32,8 @@ public class AppCache {
     public void onInit(MyApplication myApplication){
         mContext = myApplication.getApplicationContext();
         ScreenUtils.init(mContext);
+        dbUtils.createDatabase();
+
     }
 
     public static void init(MyApplication myApplication) {
@@ -39,7 +41,8 @@ public class AppCache {
     }
 
     public static void setMemireList(List<Memoire> list){
-        getInstance().memireList = list;
+        getInstance().memireList.clear();
+        getInstance().memireList .addAll(list);
     }
 
     public static List<Memoire> getMemireList(){
@@ -52,5 +55,18 @@ public class AppCache {
 
     public static List<Memoire> getSearchList(){
         return getInstance().searchList;
+    }
+
+
+    public static void setTypeList(List<String> list){
+        getInstance().typeList.clear();
+        getInstance().typeList.addAll(list);
+    }
+
+    public static List<String> getTypeList(){
+        return getInstance().typeList;
+    }
+    public static void addTypeList(String type){
+         getInstance().typeList.add(type);
     }
 }

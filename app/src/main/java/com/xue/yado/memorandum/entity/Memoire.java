@@ -2,15 +2,20 @@ package com.xue.yado.memorandum.entity;
 
 import com.xue.yado.memorandum.utils.TimerUtil;
 
+import org.litepal.crud.DataSupport;
+
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Random;
 
 /**
  * Created by Administrator on 2018/11/7.
  */
 
-public class Memoire implements Serializable{
+public class Memoire extends DataSupport implements Serializable{
+
+    private Integer tag;
 
     private String title;
 
@@ -22,7 +27,9 @@ public class Memoire implements Serializable{
 
     private String type;// 类型 | 标签
 
-    public Memoire() {}
+    public Memoire() {
+        this.tag = new Random().nextInt(10000);
+    }
 
     public Memoire(String title, String content, Date createDate, Date lastModifyDate, String type) {
         this.title = title;
@@ -30,6 +37,15 @@ public class Memoire implements Serializable{
         this.createDate = createDate;
         this.lastModifyDate = lastModifyDate;
         this.type = type;
+        this.tag = new Random().nextInt(10000);
+    }
+
+    public Integer getTag() {
+        return tag;
+    }
+
+    public void setTag(Integer tag) {
+        this.tag = tag;
     }
 
     public String getTitle() {

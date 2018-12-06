@@ -1,9 +1,14 @@
 package com.xue.yado.memorandum.adapter;
 
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ImageSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,10 +22,13 @@ import com.xue.yado.memorandum.entity.Memoire;
 import com.xue.yado.memorandum.service.MainRecyclerItemClickListener;
 import com.xue.yado.memorandum.service.MemorandumDataChangedListener;
 
+import com.xue.yado.memorandum.utils.ImageUtils;
 import com.xue.yado.memorandum.utils.ScreenUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 /**
@@ -68,6 +76,9 @@ public class GridRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view;
+        /**
+         * 动态获取 SpanSize
+         */
         if(layoutManager instanceof GridLayoutManager){
                 ((GridLayoutManager)layoutManager).setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
                     @Override
@@ -94,7 +105,8 @@ public class GridRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         if(getItemViewType(position) == HAS_DATA){
             TextView content = holder.itemView.findViewById(R.id.recyclerView_content);
             TextView date = holder.itemView.findViewById(R.id.recyclerView_date);
-            content.setText(dataList.get(position).getContent());
+//            content.setText(dataList.get(position).getContent());
+            content.setText(initContent(dataList.get(position),holder.itemView.getContext(),holder.itemView));
             date.setText(dataList.get(position).getLastModifyDate());
             GridLayoutManager.LayoutParams params = (GridLayoutManager.LayoutParams) holder.itemView.getLayoutParams();
             // 设置成长宽均为屏幕宽度的一半（正方形）
@@ -120,7 +132,7 @@ public class GridRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             no_data_flaotButton.setOnClickListener(new View.OnClickListener() {
             @Override
         public void onClick(View view) {
-                holder.itemView.getContext().startActivity(new Intent(holder.itemView.getContext(),AddMemorandumActivity.class));
+           holder.itemView.getContext().startActivity(new Intent(holder.itemView.getContext(),AddMemorandumActivity.class));
         }
     });
         }
@@ -128,6 +140,40 @@ public class GridRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     }
 
+    /**
+     * 初始化内容，将图片路径转换成图片
+     */
+    public Spannable initContent(Memoire memoire, Context context,View view){
+        String input = memoire.getContent().toString();
+        //String regex = "<img src=\\".*?\\"\\/>";
+        Pattern p = Pattern.compile("\\<img src=\".*?\"\\/>");
+        Matcher m = p.matcher(input);
+        //List<String> result = new ArrayList<String>();
+
+
+        SpannableString spannable = new SpannableString(input);
+        while(m.find()){
+            //这里s保存的是整个式子，即<img src="xxx"/>，start和end保存的是下标
+            String s = m.group();
+            int start = m.start();
+            int end = m.end();
+            //path是去掉<img src=""/>的中间的图片路径
+            String path = s.replaceAll("\\<img src=\"|\"\\/>","").trim();
+
+            //利用spannableString和ImageSpan来替换掉这些图片
+            //int width = ScreenUtils.getViewWidth(view);
+            //int height = ScreenUtils.getViewHeight(view);
+          //  Log.i("initContent: ","width=="+width+"height=="+height);
+            try {
+                Bitmap bitmap = ImageUtils.getSmallBitmap(path, 480, 480);
+                ImageSpan imageSpan = new ImageSpan(context, bitmap);
+                spannable.setSpan(imageSpan, start, end, Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+      return  spannable;
+    }
 
 
     class ContentViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{

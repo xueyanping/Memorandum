@@ -4,6 +4,7 @@ package com.xue.yado.memorandum.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -16,8 +17,6 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
-import android.text.LoginFilter;
-import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.MenuItem;
@@ -25,9 +24,9 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 
+import com.xue.yado.memorandum.Constant;
 import com.xue.yado.memorandum.R;
 import com.xue.yado.memorandum.adapter.GridRecyclerAdapter;
 import com.xue.yado.memorandum.entity.Memoire;
@@ -35,11 +34,10 @@ import com.xue.yado.memorandum.myView.GridRecyclerItemDecoration;
 import com.xue.yado.memorandum.service.MainRecyclerItemClickListener;
 import com.xue.yado.memorandum.service.MemorandumDataChangedListener;
 import com.xue.yado.memorandum.utils.AppCache;
+import com.xue.yado.memorandum.utils.dbUtils;
 
 
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -75,25 +73,56 @@ public class MainActivity extends BaseActivity implements MemorandumDataChangedL
 
     GridRecyclerAdapter adapter;
 
-
     String toolbar_title;
 
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Log.i("onCreate", "onCreate:1111 ");
+        setData();
+        initViews();
+        initEvent();
+        setListener();
+    }
 
     @Override
     public void setContentView() {
        setContentView(R.layout.activity_main);
     }
 
-    public void startAction(Context context,Class clazz,int position,boolean isEmpty_search_text){
+    public void startAction(Context context, Class clazz,String action, int position){
         Intent intent = new Intent(context,clazz);
+        intent.setAction(action);
         intent.putExtra("position",position);
-        intent.putExtra("isEmpty_search_text",isEmpty_search_text);
         startActivity(intent);
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        if(search_text != null && !search_text.getText().toString().trim().equals("")){
+            Log.i("onCreate", "onStart:111 "+search_text.getText().toString());
+            if(searchData(search_text.getText().toString().trim()) != null){
+                AppCache.getSearchList().clear();
+                AppCache.getSearchList().addAll(searchData(search_text.getText().toString().trim()));
+                adapter.setData(AppCache.getSearchList());
+                adapter.notifyDataSetChanged();
+            }
+        }else{
+            adapter.setData(dbUtils.findAllData(Memoire.class));
+            adapter.notifyDataSetChanged();
+        }
+    }
+
+    /**
+     * 只有在使用intent 调用startActivity()时才会调用
+     * @param intent
+     */
+    @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
+        Log.i("onCreate", "onNewIntent: ");
     }
 
     @Override
@@ -112,7 +141,6 @@ public class MainActivity extends BaseActivity implements MemorandumDataChangedL
         //在布局左上角显示(系统默认)图标
         ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, 0, 0);
         drawerToggle.syncState();
-        setData();
     }
 
     @Override
@@ -125,7 +153,6 @@ public class MainActivity extends BaseActivity implements MemorandumDataChangedL
         GridRecyclerItemDecoration gridRecyclerItemDecoration = new GridRecyclerItemDecoration();
         recyclerView.addItemDecoration(gridRecyclerItemDecoration);
         recyclerView.setAdapter(adapter);
-        adapter.setData(AppCache.getMemireList());
     }
 
     @Override
@@ -155,6 +182,7 @@ public class MainActivity extends BaseActivity implements MemorandumDataChangedL
                         break;
                 }
                 getSupportActionBar().setTitle(toolbar_title);
+                searchDataByToolbar_title(toolbar_title);
                 drawerLayout.closeDrawer(GravityCompat.START);
                 return true;
             }
@@ -163,11 +191,11 @@ public class MainActivity extends BaseActivity implements MemorandumDataChangedL
         adapter.setRecyclerItemClickListener(new MainRecyclerItemClickListener() {
             @Override
             public void itemClick(int position) {
+               // Log.i( "itemClick: ","position=="+position);
                 if(search_text.getText().toString().equals("")){
-                    startAction(MainActivity.this,DetailMemorandumActivity.class,position,true);
+                    startAction(MainActivity.this,AddMemorandumActivity.class, Constant.NO_SEARCH_ACTION,position);
                 }else{
-                    startAction(MainActivity.this,DetailMemorandumActivity.class,position,true);
-
+                    startAction(MainActivity.this,AddMemorandumActivity.class,Constant.SEARCH_ACTION,position);
                 }
 
             }
@@ -221,7 +249,6 @@ public class MainActivity extends BaseActivity implements MemorandumDataChangedL
                     adapter.setData(AppCache.getMemireList());
                 }
 
-
             }
 
             @Override
@@ -231,38 +258,28 @@ public class MainActivity extends BaseActivity implements MemorandumDataChangedL
         });
     }
 
+    private void searchDataByToolbar_title(String title) {
+        Log.i("searchDataByT", "searchDataByToolbar_title: ==="+title);
+
+    }
+
+
+    /**
+     * 搜索相关
+     * @param string
+     * @return
+     */
     public List<Memoire> searchData(String string) {
         int i = 0;
         if(string.equals("")){
             return null;
         }
         List<Memoire> list = new ArrayList<>();
-       for(i = 0;i<AppCache.getMemireList().size();i++){
-           if(string.equals(AppCache.getMemireList().get(i).getContent().toString())){
-               list.add(AppCache.getMemireList().get(i));
-           }
-       }
-
+        String whereSql = "content like ?";
+        String whereSql2 = "%"+string+"%";
+        list.addAll(dbUtils.findSearchData(Memoire.class,whereSql,whereSql2));
+//      Log.i( "searchData: ","list==="+list.size());
         return list;
-    }
-
-
-
-    @Override
-    public void setData() {
-        Memoire memoire = new Memoire("标题","内容",new Date(),new Date(),"类型0");
-        Memoire memoire2 = new Memoire("标题2","内容2",new Date(),new Date(),"类型2");
-        AppCache.getMemireList().add(memoire);
-        AppCache.getMemireList().add(memoire2);
-        Memoire memoire3 = new Memoire("标题3","内容2",new Date(),new Date(),"类型3");
-        AppCache.getMemireList().add(memoire3);
-        Memoire memoire4 = new Memoire("标题3","内容2",new Date(),new Date(),"类型3");
-        AppCache.getMemireList().add(memoire4);
-        Memoire memoire5 = new Memoire("标题3","内容2",new Date(),new Date(),"类型3");
-        AppCache.getMemireList().add(memoire5);
-        Memoire memoire6 = new Memoire("标题3","内容2",new Date(),new Date(),"类型3");
-        AppCache.getMemireList().add(memoire6);
-
     }
 
     @Override

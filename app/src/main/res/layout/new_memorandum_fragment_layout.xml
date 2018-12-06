@@ -34,7 +34,10 @@
      android:layout_height="match_parent"
      android:orientation="vertical"
     >
-
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:overScrollMode="never">
   <EditText
       android:id="@+id/new_content"
       android:layout_width="match_parent"
@@ -45,12 +48,12 @@
       android:gravity="start"
       android:textCursorDrawable="@drawable/editcursor"
       android:textSize="@dimen/edit_text_size" />
-
+</ScrollView>
   <ScrollView
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_gravity="bottom|right"
-      >
+      android:overScrollMode="never">
 
   <include
       layout="@layout/floatactionbutton_menu_layout"

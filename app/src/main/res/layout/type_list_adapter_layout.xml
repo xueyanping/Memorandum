@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    >
+
+    <ImageView
+        android:id="@+id/type_list_adapter_image"
+        android:layout_width="25dp"
+        android:layout_height="20dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="12dp"
+        android:layout_marginStart="12dp"
+        android:src="@mipmap/biaoqian1" />
+
+    <TextView
+        android:id="@+id/type_list_adapter_text"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_centerVertical="true"
+        android:gravity="center"
+        android:layout_toEndOf="@+id/type_list_adapter_image"
+        android:layout_toLeftOf="@+id/type_list_adapter_check"
+        android:layout_toRightOf="@+id/type_list_adapter_image"
+        android:layout_toStartOf="@+id/type_list_adapter_check"
+        android:text="content"
+        android:textSize="@dimen/edit_text_size"
+        android:textColor="@color/black"/>
+
+    <ImageView
+        android:id="@+id/type_list_adapter_check"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/type_list_adapter_image"
+        android:layout_marginEnd="11dp"
+        android:layout_marginRight="11dp"
+        android:src="@mipmap/single_check" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignLeft="@+id/type_list_adapter_text"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignStart="@+id/type_list_adapter_text"
+        android:background="@color/type_list_adapter_Divid" />
+</RelativeLayout>

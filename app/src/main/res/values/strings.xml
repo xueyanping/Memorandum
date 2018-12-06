@@ -8,4 +8,6 @@
     <string name="addNewMemorandum_toolbar">编辑备忘录</string>
     <string name="paizhao">拍照</string>
     <string name="no_memorandum">没有备忘录</string>
+    <string name="add_biaoqian">添加标签</string>
+    <string name="quit">取消</string>
 </resources>

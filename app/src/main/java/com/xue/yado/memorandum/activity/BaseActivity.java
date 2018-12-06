@@ -1,8 +1,6 @@
 package com.xue.yado.memorandum.activity;
 
 import android.Manifest;
-import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -15,12 +13,9 @@ import android.widget.Toast;
 
 import com.xue.yado.memorandum.R;
 import com.xue.yado.memorandum.utils.PermissionReq;
-import com.xue.yado.memorandum.utils.ScreenUtils;
 
 
 import butterknife.ButterKnife;
-
-import static android.os.Build.VERSION_CODES.M;
 
 /**
  * Created by Administrator on 2018/11/7.
@@ -50,9 +45,7 @@ public class BaseActivity extends AppCompatActivity {
             }
         }).request();
 
-        initViews();
-        initEvent();
-        setListener();
+
     }
 
     public void setContentView() {}
@@ -98,16 +91,11 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.toolBar_save:
-                if(rightType==1){
-                    Toast.makeText(this, "save", Toast.LENGTH_SHORT).show();
-                }
-                break;
             case android.R.id.home:
                 this.finish();
                 break;
         }
-        return true;
+        return false;
     }
 
 

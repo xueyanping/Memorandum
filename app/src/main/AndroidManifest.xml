@@ -3,6 +3,7 @@
     package="com.xue.yado.memorandum">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA"></uses-permission>
 
     <application
         android:name=".MyApplication"
@@ -24,7 +25,8 @@
                 >
             </meta-data>
         </provider>
-        <activity android:name=".activity.MainActivity">
+        <activity android:name=".activity.MainActivity"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -34,6 +36,7 @@
         <activity android:name=".activity.AddMemorandumActivity" />
         <activity android:name=".activity.Main2Activity"></activity>
         <activity android:name=".activity.DetailMemorandumActivity"></activity>
+        <activity android:name=".activity.ImageZoomActivity"></activity>
     </application>
 
 </manifest>

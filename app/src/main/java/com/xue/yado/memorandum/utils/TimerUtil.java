@@ -1,5 +1,6 @@
 package com.xue.yado.memorandum.utils;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -22,5 +23,30 @@ public class TimerUtil {
         simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         return simpleDateFormat.format(date);
     }
+
+    //将字符串"xxxx年xxy月xx日"转化为Date类型
+    public static Date getDateWithHourAndMinute(String s){
+        simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        Date date = null;
+        try {
+            date = simpleDateFormat.parse(s);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return date;
+    }
+
+    //将字符串"xxxx年xxy月xx日"转化为Date类型
+    public static Date getDateWithoutHourAndMinute(String s){
+        simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = null;
+        try {
+            date = simpleDateFormat.parse(s);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return date;
+    }
+
 
 }
